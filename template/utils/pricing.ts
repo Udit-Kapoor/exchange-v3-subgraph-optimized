@@ -8,16 +8,17 @@ import { getOrLoadToken } from './entity'
 // prettier-ignore
 const WETH_ADDRESS = '0xc9b53ab2679f573e480d01e0f49e2b5cfb7a3eab' // WXTZ
 // prettier-ignore
-const USDC_WETH_03_POOL = '0x508060a01f11d6a2eb774b55aeba95931265e0cc' // USDC/WXTZ pool
-
-const STABLE_IS_TOKEN0 = 'true' as string
+const USDC_WXTZ_POOL_MAINNET  = '0xd95b03d60e93c9a5f5de6545258f28e5c868eab8' // USDC/WXTZ pool (etherlink)
+// prettier-ignore
+const USDC_WXTZ_POOL_SHADOWNET = '0xa89102e52603b55c971cad1fbf67e259883b48ed' // USDC/WXTZ pool (etherlink-shadownet)
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
 // prettier-ignore
 // export let WHITELIST_TOKENS: string[] = '0x4200000000000000000000000000000000000006,0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca,0x2ae3f1ec7f1f5012cfeab0185bfc7aa3cf0dec22,0xb6fe221fe9eef5aba221c348ba20a1bf5e73624c,0x50c5725949a6f0c72e6c4a641f24049a917db0cb,0x417ac0e078398c154edfadd9ef675d30be60af93,0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'.split(',')
 export const WHITELIST_TOKENS: string[] = [
-  "0xc9b53ab2679f573e480d01e0f49e2b5cfb7a3eab", // WXTZ
+  "0xc9b53ab2679f573e480d01e0f49e2b5cfb7a3eab", // WXTZ (mainnet + shadownet)
+  // mainnet
   "0x2c03058c8afc06713be23e58d2febc8337dbfe6a", // USDT
   "0x796ea11fa2dd751ed01b53c372ffdb4aaa8f00f9", // USDC
   "0xbfc94cd2b1e55999cfc7347a9313e88702b83d0f", // WBTC
@@ -25,7 +26,8 @@ export const WHITELIST_TOKENS: string[] = [
   "0xaa40a1cc1561c584b675cbd12f1423a32e2a0d8c", // WBNB
   "0xe820995cd39b6e09eaa7e4e16337184b4a61b644", // WAVAX
   "0xbbd1f50a212357067318a84179892684e1ac5181", // SHIB
-  // "0x17f9805664347022b59a8f67c1b8237b0ac5e89b", // IGN
+  // shadownet
+  "0x064455f03b93bc1cdb8197f718aa055ae3115400", // USDC (shadownet)
 ];
 
 // prettier-ignore
@@ -34,9 +36,8 @@ const STABLE_COINS: string[] = [
   // Mainnet
   "0x2c03058c8afc06713be23e58d2febc8337dbfe6a", // USDT
   "0x796ea11fa2dd751ed01b53c372ffdb4aaa8f00f9", // USDC
-  // Testnet
-  // "0xd21b917d2f4a4a8e3d12892160bffd8f4cd72d4f", // USDT
-  // "0xa7c9092a5d2c3663b7c5f714dba806d02d62b58a", // USDC
+  // Shadownet
+  "0x064455f03b93bc1cdb8197f718aa055ae3115400", // USDC (shadownet)
 ];
 
 let MINIMUM_ETH_LOCKED = BigDecimal.fromString('1')
@@ -52,13 +53,16 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 }
 
 export function getEthPriceInUSD(): BigDecimal {
-  // fetch eth prices for each stablecoin
-  let usdcPool = Pool.load(Bytes.fromHexString(USDC_WETH_03_POOL)) // dai is token0
-  if (usdcPool !== null) {
-    if (STABLE_IS_TOKEN0 === 'true') {
-      return usdcPool.token0Price
+  let pool = Pool.load(Bytes.fromHexString(USDC_WXTZ_POOL_MAINNET))
+  if (pool === null) {
+    pool = Pool.load(Bytes.fromHexString(USDC_WXTZ_POOL_SHADOWNET))
+  }
+  if (pool !== null) {
+    // token0Price = token0 per token1; if stable is token0, that gives us USD per WXTZ
+    if (STABLE_COINS.includes(pool.token0.toHexString())) {
+      return pool.token0Price
     }
-    return usdcPool.token1Price
+    return pool.token1Price
   }
   return ZERO_BD
 }

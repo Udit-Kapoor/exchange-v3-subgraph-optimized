@@ -7,7 +7,8 @@ import {
   Transfer,
 } from '../generated/NonfungiblePositionManager/NonfungiblePositionManager'
 import { Bundle, Position, PositionSnapshot, Token } from '../generated/schema'
-import { ADDRESS_ZERO, factoryContract, ZERO_BD, ZERO_BI } from '../utils/constants'
+import { ADDRESS_ZERO, ZERO_BD, ZERO_BI } from '../utils/constants'
+import { Factory as FactoryContract } from '../generated/templates/Pool/Factory'
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { getOrLoadToken } from '../utils/entity'
@@ -24,6 +25,8 @@ function getPosition(event: ethereum.Event, tokenId: BigInt): Position | null {
     // (e.g. 0xf7867fa19aa65298fadb8d4f72d0daed5e836f3ba01f0b9b9631cdc6c36bed40)
     if (!positionCall.reverted) {
       let positionResult = positionCall.value
+      let factoryAddress = contract.factory()
+      let factoryContract = FactoryContract.bind(factoryAddress)
       let poolAddress = factoryContract.getPool(positionResult.value2, positionResult.value3, positionResult.value4)
 
       position = new Position(Bytes.fromI32(tokenId.toI32()))

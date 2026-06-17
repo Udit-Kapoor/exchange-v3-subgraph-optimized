@@ -4,8 +4,8 @@ import { Factory as FactoryContract } from '../generated/templates/Pool/Factory'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 // prettier-ignore
-export const FACTORY_ADDRESS = '0x093ccbaecb0e0006c8bffca92e9929d117fec583'
-export const FACTORY_ADDRESS_BYTES = Bytes.fromHexString('0x093ccbaecb0e0006c8bffca92e9929d117fec583');
+export const FACTORY_ADDRESS = '0x7945d116287d7541be44423fa5ebe8fa833fa076'
+export const FACTORY_ADDRESS_BYTES = Bytes.fromHexString('0x7945d116287d7541be44423fa5ebe8fa833fa076');
 
 
 export let ZERO_BI = BigInt.fromI32(0)
