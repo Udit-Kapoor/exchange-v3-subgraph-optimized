@@ -10,11 +10,11 @@ indexerHints:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: etherlink
+    network: etherlink-shadownet
     source:
-      address: "0x7945D116287D7541bE44423fA5EbE8fa833fA076"
+      address: "0xf857fD04Aae950b33168AecE2b4ad6F32AdE2f9F"
       abi: Factory
-      startBlock: 4433934
+      startBlock: 1954601
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -48,11 +48,11 @@ dataSources:
             decimals2: ERC20[event.params.token1].decimals()
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: etherlink
+    network: etherlink-shadownet
     source:
-      address: "0x56931a02A7a9b9bcc3F548b7155bF6028C858825"
+      address: "0x4c1f8d317Cc79515409C852793261977E76977B5"
       abi: NonfungiblePositionManager
-      startBlock: 4433946
+      startBlock: 1954605
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -88,7 +88,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: etherlink
+    network: etherlink-shadownet
     source:
       abi: Pool
     mapping:
